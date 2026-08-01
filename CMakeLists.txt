@@ -9,7 +9,13 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # add source for additional modules here
 set(LIB_SOURCE
-	game.hpp game.cpp)
+	math.hpp				math.cpp
+	component.hpp			component.cpp
+	entity.hpp				entity.cpp
+	spriteComponent.hpp		spriteComponent.cpp
+	animSpriteComponent.hpp	animSpriteComponent.cpp
+	ship.hpp				ship.cpp
+	game.hpp 				game.cpp)
 
 # add source for Main program loop here
 set(MAIN_SOURCE main.cpp)
@@ -23,6 +29,8 @@ if(SDL3_USE_SYSTEM)
 	find_package(SDL3 QUIET)
 endif()
 
+# SDL_FOUND is the bool indicating whether the requested version of SDL library was found
+# cmake documentation w/ more info https://cmake.org/cmake/help/latest/module/FindSDL.html
 if(NOT SDL3_FOUND)
 	message(STATUS "SDL3 not found. Using FetchContent to download from Github and build...")
 
@@ -36,6 +44,32 @@ if(NOT SDL3_FOUND)
 	message(STATUS "SDL3 downloaded and configured")
 else()
 	message(STATUS "SDL3 found: ${SDL3_DIR}")
+endif()
+
+# Developer override options with -DSDL_IMAGE_USE_SYSTEM=OFF build flag
+# Developer Option 1: Use installed SDL_image if available
+# Developer Option 2: Auto-download if not found
+option(SDL_IMAGE_USE_SYSTEM "Use system SDL_image if available" ON)
+if(SDL_IMAGE_USE_SYSTEM)
+	# Try to find SDL3 first
+	find_package(SDL3_image QUIET)
+endif()
+
+# SDL_image_FOUND is the bool indicating whether the requested version of SDL_image library was found
+# cmake documentation w/ more info https://cmake.org/cmake/help/latest/module/FindSDL_image.html
+if(NOT SDL_image_FOUND)
+	message(STATUS "SDL_image not found. Using FetchContent to download from Github and build...")
+
+	include(FetchContent)
+	FetchContent_Declare(SDL3_image
+		GIT_REPOSITORY https://github.com/libsdl-org/SDL_image
+		GIT_TAG main
+	)
+
+	FetchContent_MakeAvailable(SDL3_image)
+	message(STATUS "SDL3_image downloaded and configured")
+else()
+	message(STATUS "SDL3_image found: ${SDL3_image_DIR}")
 endif()
 
 # set game name/title here
@@ -54,7 +88,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(EXECUTABLE_NAME ${MAIN_SOURCE} ${LIB_SOURCE})
 
 # link the SDL target (handles include directories and binaries)
-target_link_libraries(EXECUTABLE_NAME PRIVATE SDL3::SDL3)
+target_link_libraries(EXECUTABLE_NAME PRIVATE SDL3_image::SDL3_image SDL3::SDL3)
 
 # Copy SDL3.dll to the executable directory after build
 add_custom_command(TARGET EXECUTABLE_NAME POST_BUILD
