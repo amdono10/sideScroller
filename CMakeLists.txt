@@ -20,19 +20,35 @@ set(LIB_SOURCE
 # add source for Main program loop here
 set(MAIN_SOURCE main.cpp)
 
+# ---------------------------------------------------------------------------
+# Local install locations (hints for find_package)
+# ---------------------------------------------------------------------------
+# If you installed SDL3 / SDL3_image to non-standard locations, list the
+# install prefixes here (the folder containing each library's "cmake"
+# subdirectory). CMAKE_PREFIX_PATH is what find_package() checks first,
+# in addition to standard platform locations (CMAKE_SYSTEM_PREFIX_PATH,
+# e.g. /usr/local on Linux/macOS or Program Files on Windows), before
+# giving up and letting us fall back to FetchContent below.
+#
+# I use list(APPEND ...) rather than set(...) so I don't clobber any
+# value already provided via the command line or environment, e.g.:
+#   cmake -B build -DCMAKE_PREFIX_PATH="C:/SomeOtherLib"
+# Edit the paths below to match your own machine.
+list(APPEND CMAKE_PREFIX_PATH "C:/SDL" "C:/SDL_image")
+
 # Developer override options with -DSDL3_USE_SYSTEM=OFF build flag
 # Developer Option 1: Use installed SDL3 if available
 # Developer Option 2: Auto-download if not found
 option(SDL3_USE_SYSTEM "Use system SDL3 if available" ON)
 if(SDL3_USE_SYSTEM)
-	# Try to find SDL3 first
+	# Try to find SDL3 first (checks CMAKE_PREFIX_PATH hints above, plus standard system locations)
 	find_package(SDL3 QUIET)
 endif()
 
-# SDL_FOUND is the bool indicating whether the requested version of SDL library was found
+# SDL3_FOUND is the bool indicating whether the requested version of SDL library was found
 # cmake documentation w/ more info https://cmake.org/cmake/help/latest/module/FindSDL.html
 if(NOT SDL3_FOUND)
-	message(STATUS "SDL3 not found. Using FetchContent to download from Github and build...")
+	message(STATUS "SDL3 not found via find_package. Using FetchContent to download from Github and build...")
 
 	include(FetchContent)
 	FetchContent_Declare(SDL3
@@ -51,14 +67,22 @@ endif()
 # Developer Option 2: Auto-download if not found
 option(SDL_IMAGE_USE_SYSTEM "Use system SDL_image if available" ON)
 if(SDL_IMAGE_USE_SYSTEM)
-	# Try to find SDL3 first
+	# Try to find SDL3_image first (checks CMAKE_PREFIX_PATH hints above, plus standard system locations)
 	find_package(SDL3_image QUIET)
 endif()
 
-# SDL_image_FOUND is the bool indicating whether the requested version of SDL_image library was found
+# SDL3_image_FOUND is the bool indicating whether the requested version of SDL_image library was found
 # cmake documentation w/ more info https://cmake.org/cmake/help/latest/module/FindSDL_image.html
-if(NOT SDL_image_FOUND)
-	message(STATUS "SDL_image not found. Using FetchContent to download from Github and build...")
+if(NOT SDL3_image_FOUND)
+	message(STATUS "SDL3_image not found via find_package. Using FetchContent to download from Github and build...")
+
+	# Disable heavy optional image formats so the vendored build doesn't
+	# require extra toolchain components (e.g. AVIF pulls in dav1d, which
+	# needs a NASM assembler that most dev machines don't have installed).
+	set(SDLIMAGE_AVIF OFF CACHE BOOL "" FORCE)
+	set(SDLIMAGE_JXL  OFF CACHE BOOL "" FORCE)
+	set(SDLIMAGE_TIF  OFF CACHE BOOL "" FORCE)
+	set(SDLIMAGE_WEBP OFF CACHE BOOL "" FORCE)
 
 	include(FetchContent)
 	FetchContent_Declare(SDL3_image
@@ -67,7 +91,7 @@ if(NOT SDL_image_FOUND)
 	)
 
 	FetchContent_MakeAvailable(SDL3_image)
-	message(STATUS "SDL3_image downloaded and configured")
+	message(STATUS "SDL3_image downloaded and configured (AVIF/JXL/TIFF/WebP disabled)")
 else()
 	message(STATUS "SDL3_image found: ${SDL3_image_DIR}")
 endif()
@@ -85,15 +109,15 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # executable target and corresponding source file(s)
-add_executable(EXECUTABLE_NAME ${MAIN_SOURCE} ${LIB_SOURCE})
+add_executable(${EXECUTABLE_NAME} ${MAIN_SOURCE} ${LIB_SOURCE})
 
 # link the SDL target (handles include directories and binaries)
-target_link_libraries(EXECUTABLE_NAME PRIVATE SDL3_image::SDL3_image SDL3::SDL3)
+target_link_libraries(${EXECUTABLE_NAME} PRIVATE SDL3_image::SDL3_image SDL3::SDL3)
 
 # Copy SDL3.dll to the executable directory after build
-add_custom_command(TARGET EXECUTABLE_NAME POST_BUILD
+add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different
 		$<TARGET_FILE:SDL3::SDL3>
-		$<TARGET_FILE_DIR:EXECUTABLE_NAME>
+		$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>
 	COMMENT "Copying SDL3.dll to executable directory"
 )

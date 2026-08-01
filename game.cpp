@@ -1,5 +1,5 @@
 #include "game.hpp"
-#include <SDL3/SDL_image.h>
+#include <SDL3_image/SDL_image.h>
 #include <algorithm>
 #include "entity.hpp"
 #include "spriteComponent.hpp"
