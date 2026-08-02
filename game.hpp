@@ -61,7 +61,7 @@ private:
 
 	// Game-specific
 	class Ship* mShip;	// player's ship
-}
+};
 
 
 #endif // _GAME_HPP

@@ -21,8 +21,8 @@ public:
 protected:
 	SDL_Texture* mTexture;
 	int mDrawOrder;
-	int mTexWidth;
-	int mTexHeight;
+	float mTexWidth;
+	float mTexHeight;
 };
 
 #endif // _SPRITE_COMPONENT_HPP

@@ -51,8 +51,8 @@ void Entity::AddComponent(Component* component)
 	// Find the insertion point in the sorted vector
 	// the first element with a order higher than me
 	int myOrder = component->GetUpdateOrder();
-	// auto iter = mComponents.begin();
-	for (auto iter = mComponents.begin(); iter!= mComponents.end(); ++iter)
+	auto iter = mComponents.begin();
+	for (; iter!= mComponents.end(); ++iter)
 	{
 		if (mOrder < (*iter)->GetUpdateOrder())
 		{
