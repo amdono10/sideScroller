@@ -46,7 +46,7 @@ void Ship::UpdateEntity(float deltaTime)
 	SetPosition(pos);
 }
 
-void Ship::ProcessKeyboard(const uint8_t* state)
+void Ship::ProcessKeyboard(const bool* state)
 {
 	mRightSpeed = 0.0f;
 	mDownSpeed = 0.0f;

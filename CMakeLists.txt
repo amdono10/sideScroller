@@ -13,6 +13,7 @@ set(LIB_SOURCE
 	component.hpp			component.cpp
 	entity.hpp				entity.cpp
 	spriteComponent.hpp		spriteComponent.cpp
+	bgSpriteComponent.hpp	bgSpriteComponent.cpp
 	animSpriteComponent.hpp	animSpriteComponent.cpp
 	ship.hpp				ship.cpp
 	game.hpp 				game.cpp)
@@ -120,4 +121,12 @@ add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
 		$<TARGET_FILE:SDL3::SDL3>
 		$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>
 	COMMENT "Copying SDL3.dll to executable directory"
+)
+
+# Copy SDL3_image.dll to the executable directory after build
+add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different
+		$<TARGET_FILE:SDL3_image::SDL3_image>
+		$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>
+	COMMENT "Copying SDL3_image.dll to executable directory"
 )

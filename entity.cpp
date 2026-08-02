@@ -52,9 +52,12 @@ void Entity::AddComponent(Component* component)
 	// the first element with a order higher than me
 	int myOrder = component->GetUpdateOrder();
 	auto iter = mComponents.begin();
-	for (; iter!= mComponents.end(); ++iter)
+	for (;
+		 iter!= mComponents.end();
+		 ++iter)
 	{
-		if (mOrder < (*iter)->GetUpdateOrder())
+		int val = (*iter)->GetUpdateOrder();
+		if (myOrder < val)
 		{
 			break; 
 		}	

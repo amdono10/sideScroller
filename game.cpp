@@ -87,7 +87,7 @@ void Game::UpdateGame()
 {
 	// compute delta time
 	// wait until 16ms has elapsed since last frame
-	while (!SDL_TICKS_PASSED(SDL_GetTicks(), mTicksCount + 16))
+	while ( !(SDL_GetTicks() >= mTicksCount + 16) )
 		;
 	
 	float deltaTime = (SDL_GetTicks() - mTicksCount) / 1000.0f;
@@ -214,7 +214,7 @@ SDL_Texture* Game::GetTexture(const std::string& fileName)
 
 		// Create texture from surface
 		tex = SDL_CreateTextureFromSurface(mRenderer, surf);
-		SDL_FreeSurface(surf);
+		SDL_DestroySurface(surf);
 		if (!tex)
 		{
 			SDL_Log("Failed to convert surface to texture for %s", fileName.c_str());
@@ -248,7 +248,7 @@ void Game::AddEntity(Entity* entity)
 	}
 }
 
-void Game::RemoveEnity(Entity* entity)
+void Game::RemoveEntity(Entity* entity)
 {
 	// Is it in pending entities?
 	auto iter = std::find(mPendingEntities.begin(), mPendingEntities.end(), entity);
@@ -274,7 +274,8 @@ void Game::AddSprite(SpriteComponent* sprite)
 	// Find the insertion point in the sorted vector
 	// (the first element with ahigher draw order than me)
 	int myDrawOrder = sprite->GetDrawOrder();
-	for (auto iter = mSprites.begin(); iter != mSprites.end(); ++iter)
+	auto iter = mSprites.begin();
+	for (; iter != mSprites.end(); ++iter)
 	{
 		if (myDrawOrder < (*iter)->GetDrawOrder())
 		{
