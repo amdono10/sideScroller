@@ -200,7 +200,7 @@ SDL_Texture* Game::GetTexture(const std::string& fileName)
 		SDL_Surface* surf = IMG_Load(fileName.c_str());
 		if (!surf)
 		{
-			SDL_Log("Failed to load texture file %s", fileName.c_str());
+			SDL_Log("Failed to load texture file %s! SDL_image error: %s\n", fileName.c_str(), SDL_GetError());
 			return nullptr;
 		}
 
@@ -209,7 +209,7 @@ SDL_Texture* Game::GetTexture(const std::string& fileName)
 		SDL_DestroySurface(surf);
 		if (!tex)
 		{
-			SDL_Log("Failed to convert surface to texture for %s", fileName.c_str());
+			SDL_Log("Failed to convert surface to texture for %s! SDL_image error: %s\n", fileName.c_str(), SDL_GetError());
 			return nullptr;
 		}
 
