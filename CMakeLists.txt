@@ -120,7 +120,7 @@ add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different
 		$<TARGET_FILE:SDL3::SDL3>
 		$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>
-	COMMENT "Copying SDL3.dll to executable directory"
+	COMMENT "Copying SDL3.dll to executable directory\n"
 )
 
 # Copy SDL3_image.dll to the executable directory after build
@@ -128,5 +128,14 @@ add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different
 		$<TARGET_FILE:SDL3_image::SDL3_image>
 		$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>
-	COMMENT "Copying SDL3_image.dll to executable directory"
+	COMMENT "Copying SDL3_image.dll to executable directory\n"
+)
+
+# Copy Assets directory to executable directory after build
+# This is needed to correctly load assets with IMG_load
+add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+		${CMAKE_SOURCE_DIR}/Assets
+		$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/Assets
+	COMMENT "Copying Assets directory to executable directory\n"
 )
