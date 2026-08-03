@@ -1,5 +1,5 @@
 #include "spriteComponent.hpp"
-#include "Math.h"
+#include "math.hpp"
 #include "entity.hpp"
 #include "game.hpp"
 
@@ -20,6 +20,7 @@ SpriteComponent::~SpriteComponent()
 
 void SpriteComponent::Draw(SDL_Renderer* renderer)
 {
+	// only draw if we have a texture
 	if (mTexture)
 	{
 		SDL_FRect r;
