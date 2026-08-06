@@ -25,7 +25,7 @@ If you wish to install SDL_image to your machine with CMake, the following is an
    ``` 
    - alternatively If there are local file conflicts (have the same name as branch)
    ```bash
-   git checkout -b exercise origin/exercisei
+   git checkout -b exercise origin/exercise
    ``` 
    - ... make commits ...
    - Push & set upstream tracking

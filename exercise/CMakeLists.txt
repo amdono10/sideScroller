@@ -13,7 +13,7 @@ set(LIB_SOURCE
 	component.hpp			component.cpp
 	entity.hpp				entity.cpp
 	spriteComponent.hpp		spriteComponent.cpp
-	bgSpriteComponent.hpp	bgSpriteComponent.cpp
+	tileMapComponent.hpp	tileMapComponent.cpp
 	animSpriteComponent.hpp	animSpriteComponent.cpp
 	character.hpp			character.cpp
 	game.hpp 				game.cpp)
