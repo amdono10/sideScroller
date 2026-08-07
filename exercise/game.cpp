@@ -6,6 +6,7 @@
 // #include "ship.hpp"
 #include "character.hpp"
 #include "bgSpriteComponent.hpp"
+#include "tileMapComponent.hpp"
 
 // constructor
 Game::Game():
@@ -135,34 +136,52 @@ void Game::GenerateOutput()
 
 void Game::LoadData()
 {
-	// create player's ship
+	// create player's character
 	mCharacter = new Character(this);
 	mCharacter->SetPosition(Vector2(100.0f, 384.0f));
 	mCharacter->SetScale(1.5f);
 
-	// create entity for the background (this doesn't need a subclass)
-	Entity* temp = new Entity(this);
-	temp->SetPosition(Vector2(512.0f, 384.0f));
+	// // create entity for the background/scene (this doesn't need a subclass)
+	// Entity* temp = new Entity(this);
+	// temp->SetPosition(Vector2(512.0f, 384.0f));
 
-	// create the "far back" background
-	BGSpriteComponent* bg = new BGSpriteComponent(temp);
-	bg->SetScreenSize(Vector2(1024.0f, 768.0f));
-	std::vector<SDL_Texture*> bgtexs = {
-		GetTexture("Assets/Farback01.png"),
-		GetTexture("Assets/Farback02.png")
-	};
-	bg->SetBGTextures(bgtexs);
-	bg->SetScrollSpeed(-100.0f);
+	// // create the "far back" background
+	// BGSpriteComponent* bg = new BGSpriteComponent(temp);
+	// bg->SetScreenSize(Vector2(1024.0f, 768.0f));
+	// std::vector<SDL_Texture*> bgtexs = {
+		// GetTexture("Assets/Farback01.png"),
+		// GetTexture("Assets/Farback02.png")
+	// };
+	// bg->SetBGTextures(bgtexs);
+	// bg->SetScrollSpeed(-100.0f);
 	
-	// Create the closer background
-	bg = new BGSpriteComponent(temp, 50);
-	bg->SetScreenSize(Vector2(1024.0f, 768.0f));
-	bgtexs = {
-		GetTexture("Assets/Stars.png"),
-		GetTexture("Assets/Stars.png")
-	};
-	bg->SetBGTextures(bgtexs);
-	bg->SetScrollSpeed(-200.0f);	
+	// // Create the closer background
+	// bg = new BGSpriteComponent(temp, 50);
+	// bg->SetScreenSize(Vector2(1024.0f, 768.0f));
+	// bgtexs = {
+		// GetTexture("Assets/Stars.png"),
+		// GetTexture("Assets/Stars.png")
+	// };
+	// bg->SetBGTextures(bgtexs);
+	// bg->SetScrollSpeed(-200.0f);
+	
+	// create entity for the scene
+	Entity* temp = new Entity(this);
+	// coorresponding texture to be used for all of these TileMapComponents
+	SDL_Texture* tiles = GetTexture("Assets/Tiles.png");
+
+	TileMapComponent* mapLayer1 = new TileMapComponent(temp, 50, "Assets/MapLayer1.csv");
+	mapLayer1->LoadTileIDMatrix();
+	mapLayer1->SetTexture(tiles);
+
+	TileMapComponent* mapLayer2 = new TileMapComponent(temp, 30, "Assets/MapLayer2.csv");
+	mapLayer2->LoadTileIDMatrix();
+	mapLayer2->SetTexture(tiles);
+
+	TileMapComponent* mapLayer3 = new TileMapComponent(temp, 10, "Assets/MapLayer3.csv");
+	mapLayer3->LoadTileIDMatrix();
+	mapLayer3->SetTexture(tiles);
+
 }
 
 void Game::UnloadData()

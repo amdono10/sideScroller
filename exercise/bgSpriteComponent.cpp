@@ -17,7 +17,7 @@ void BGSpriteComponent::Update(float deltaTime)
 		// Update the x offset
 		bg.mOffset.x += mScrollSpeed * deltaTime;
 		// If this is completely off the screen, reset offset to
-		// the right of the last bg texture
+		// the right of the previous bg texture
 		if (bg.mOffset.x < -mScreenSize.x)
 		{
 			bg.mOffset.x = (mBGTextures.size() - 1) * mScreenSize.x - 1;
